@@ -1,0 +1,125 @@
+Aim:
+
+      To write a C program that implements Dijkstra’s Algorithm to find the shortest path from a source vertex (vertex 0) to all other vertices in a weighted graph using an
+adjacency matrix representation.
+
+program:
+#include <stdio.h>
+
+#define V 5          // Number of vertices
+#define INF 999999   // Represents infinity (very large value)
+
+/*
+ * Function: extractMin
+ * --------------------
+ * Finds the unvisited vertex with the minimum distance value.
+ * This simulates the "dequeue" operation in Dijkstra’s algorithm.
+ *
+ * dist[]   : Array of shortest known distances from source
+ * visited[] : Tracks whether a vertex has been processed
+ */
+int extractMin(int dist[], int visited[])
+{
+    int min = INF, min_index = -1;
+
+    // Traverse all vertices to find minimum distance unvisited node
+    for (int v = 0; v < V; v++)
+    {
+        if (!visited[v] && dist[v] <= min)
+        {
+            min = dist[v];
+            min_index = v;
+        }
+    }
+
+    return min_index;
+}
+
+/*
+ * Function: dijkstra
+ * ------------------
+ * Implements Dijkstra’s shortest path algorithm using
+ * a greedy approach and adjacency matrix.
+ *
+ * graph[][] : Weighted adjacency matrix
+ */
+void dijkstra(int graph[V][V])
+{
+    int dist[V];     // Stores shortest distance from source
+    int visited[V];  // Tracks visited (processed) vertices
+
+    /*
+     * Step 1: Initialization
+     * All distances are set to INF and all nodes unvisited
+     */
+    for (int i = 0; i < V; i++)
+    {
+        dist[i] = INF;
+        visited[i] = 0;   // 0 means vertex is not yet processed
+    }
+
+    // Source vertex (0) distance is always 0
+    dist[0] = 0;
+
+    /*
+     * Step 2: Process all vertices
+     */
+    for (int count = 0; count < V; count++)
+    {
+        // Select vertex with minimum distance (like dequeue operation)
+        int u = extractMin(dist, visited);
+
+        // If no valid vertex found, break
+        if (u == -1)
+            break;
+
+        // Mark selected vertex as visited
+        visited[u] = 1;
+
+        /*
+         * Step 3: Relaxation
+         * Update distances of adjacent vertices
+         */
+        for (int j = 0; j < V; j++)
+        {
+            // Check if edge exists and vertex is not visited
+            if (graph[u][j] > 0 && !visited[j])
+            {
+                // If shorter path is found, update distance
+                if (dist[j] > dist[u] + graph[u][j])
+                {
+                    dist[j] = dist[u] + graph[u][j];
+                }
+            }
+        }
+    }
+
+    /*
+     * Step 4: Print shortest distances
+     */
+    printf("\nShortest distances from source (0):\n");
+    for (int i = 0; i < V; i++)
+    {
+        printf("Vertex %d -> Distance %d\n", i, dist[i]);
+    }
+}
+
+int main()
+{
+    /*
+     * Graph representation using adjacency matrix
+     * 0 means no direct edge between vertices
+     */
+    int graph[V][V] = {
+        {0, 10, 0, 30, 100},
+        {10, 0, 50, 0, 0},
+        {0, 50, 0, 20, 10},
+        {30, 0, 20, 0, 60},
+        {100, 0, 10, 60, 0}
+    };
+
+    // Run Dijkstra’s Algorithm
+    dijkstra(graph);
+
+    return 0;
+}
