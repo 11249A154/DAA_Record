@@ -1,0 +1,95 @@
+Aim:
+
+       To write a C program that finds an approximate Vertex Cover of an undirected graph using a greedy 2-approximation algorithm, and to display the selected vertices that
+cover all edges in the graph.
+
+program:
+#include <stdio.h>
+
+#define V 5  // Number of vertices in the graph
+
+/*
+ * Function: findVertexCover
+ * -------------------------
+ * Finds an approximate vertex cover using a greedy 2-approximation approach.
+ *
+ * graph[][] : Adjacency matrix of the graph
+ */
+void findVertexCover(int graph[V][V])
+{
+    int visited[V]; // Array to mark vertices included in the cover set
+
+    /*
+     * Step 1: Initialize all vertices as not included in the cover set
+     */
+    for (int i = 0; i < V; i++)
+    {
+        visited[i] = 0;
+    }
+
+    /*
+     * Step 2: Greedy selection of edges
+     * Scan all edges and pick both endpoints if both are not yet covered
+     */
+    for (int u = 0; u < V; u++)
+    {
+        for (int v = 0; v < V; v++)
+        {
+            /*
+             * Condition:
+             * 1. Edge exists between u and v
+             * 2. Neither u nor v is already in the cover set
+             */
+            if (graph[u][v] == 1 && !visited[u] && !visited[v])
+            {
+                // Add both endpoints to the vertex cover set
+                visited[u] = 1;
+                visited[v] = 1;
+
+                /*
+                 * All edges incident on u and v are now considered covered
+                 * because both endpoints are included in the set.
+                 */
+            }
+        }
+    }
+
+    /*
+     * Step 3: Print the approximate vertex cover
+     */
+    printf("Approximate Vertex Cover: ");
+    int count = 0;
+
+    for (int i = 0; i < V; i++)
+    {
+        if (visited[i])
+        {
+            printf("%d ", i);
+            count++;
+        }
+    }
+
+    printf("\nTotal vertices in the cover: %d\n", count);
+}
+
+int main()
+{
+    /*
+     * Graph represented using adjacency matrix:
+     * 1 indicates an edge, 0 indicates no edge
+     */
+    int graph[V][V] = {
+        {0, 1, 0, 0, 0},
+        {1, 0, 1, 1, 0},
+        {0, 1, 0, 1, 1},
+        {0, 1, 1, 0, 1},
+        {0, 0, 1, 1, 0}
+    };
+
+    printf("Executing Vertex Cover Approximation...\n");
+
+    // Call function to compute vertex cover
+    findVertexCover(graph);
+
+    return 0;
+}
