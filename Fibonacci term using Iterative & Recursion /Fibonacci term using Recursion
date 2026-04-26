@@ -1,0 +1,56 @@
+Aim:
+To write a C program that computes the nth Fibonacci number using a recursive approach, demonstrating tree recursion and its exponential time complexity.
+
+program:
+#include <stdio.h>
+
+/*
+ * Function: fib
+ * -------------
+ * Computes the nth Fibonacci term using recursion.
+ *
+ * n : The position of the Fibonacci term
+ * return : The Fibonacci value at position n
+ */
+int fib(int n)
+{
+    // Base condition:
+    // If n is 0 or 1, return n itself
+    if (n <= 1)
+    {
+        return n;
+    }
+
+    /*
+     * Recursive case:
+     * Fibonacci formula:
+     * F(n) = F(n-1) + F(n-2)
+     *
+     * This creates multiple recursive calls (tree recursion),
+     * leading to higher time complexity.
+     */
+    return fib(n - 1) + fib(n - 2);
+}
+
+int main()
+{
+    int n, result = 0;  // n = term position, result = Fibonacci value
+
+    // Ask user for input
+    printf("Enter the value of n: ");
+
+    // Validate input (must be non-negative integer)
+    if (scanf("%d", &n) != 1 || n < 0)
+    {
+        printf("Invalid input. Please enter a non-negative integer.\n");
+        return 0;
+    }
+
+    // Call recursive function
+    result = fib(n);
+
+    // Display result
+    printf("Fibonacci term at position %d = %d\n", n, result);
+
+    return 0;
+}
