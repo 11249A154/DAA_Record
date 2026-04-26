@@ -1,0 +1,142 @@
+Aim:
+
+    To write a C program that implements Kruskal’s Algorithm to find the Minimum Spanning Tree (MST) of a weighted graph using a greedy approach and disjoint set (union-find) 
+method, and to compute the total minimum cost.
+
+program:
+#include <stdio.h>
+
+#define V 5  // Number of vertices
+#define E 6  // Number of edges
+
+int parent[V]; // Array for disjoint set (Union-Find)
+
+/*
+ * Function: findLeader
+ * --------------------
+ * Finds the representative (leader) of the set
+ * containing vertex v.
+ *
+ * Uses simple path traversal (no path compression here)
+ */
+int findLeader(int v)
+{
+    while (parent[v] != v)
+        v = parent[v]; // Move up to parent
+    return v;
+}
+
+/*
+ * Function: mergeSets
+ * -------------------
+ * Merges two disjoint sets containing vertices u and v.
+ */
+void mergeSets(int u, int v)
+{
+    int a = findLeader(u); // Leader of set containing u
+    int b = findLeader(v); // Leader of set containing v
+
+    parent[a] = b; // Attach one tree to another
+}
+
+/*
+ * Function: sortEdges
+ * -------------------
+ * Sorts edges in ascending order of weight using Bubble Sort.
+ *
+ * edges[i][0] = source vertex
+ * edges[i][1] = destination vertex
+ * edges[i][2] = weight
+ */
+void sortEdges(int edges[E][3])
+{
+    for (int i = 0; i < E - 1; i++)
+    {
+        for (int j = 0; j < E - i - 1; j++)
+        {
+            // Compare edge weights
+            if (edges[j][2] > edges[j + 1][2])
+            {
+                // Swap entire edge (all 3 values)
+                for (int k = 0; k < 3; k++)
+                {
+                    int temp = edges[j][k];
+                    edges[j][k] = edges[j + 1][k];
+                    edges[j + 1][k] = temp;
+                }
+            }
+        }
+    }
+}
+
+/*
+ * Function: kruskal
+ * -----------------
+ * Implements Kruskal’s Algorithm to find MST.
+ *
+ * Steps:
+ * 1. Sort edges by increasing weight
+ * 2. Pick smallest edge that does not form a cycle
+ * 3. Repeat until (V-1) edges are selected
+ */
+void kruskal(int edges[E][3])
+{
+    // Step 1: Sort edges
+    sortEdges(edges);
+
+    // Step 2: Initialize disjoint sets
+    for (int i = 0; i < V; i++)
+        parent[i] = i;
+
+    int count = 0; // Number of edges selected
+    int cost = 0;  // Total cost of MST
+
+    printf("Selected Edges:\n");
+
+    // Step 3: Process edges
+    for (int i = 0; i < E; i++)
+    {
+        int u = edges[i][0];
+        int v = edges[i][1];
+        int w = edges[i][2];
+
+        // Check if adding this edge forms a cycle
+        if (findLeader(u) != findLeader(v))
+        {
+            // Include edge in MST
+            printf("%d -- %d (Weight: %d)\n", u, v, w);
+
+            mergeSets(u, v); // Union operation
+            cost += w;
+            count++;
+        }
+
+        // Stop when MST has V-1 edges
+        if (count == V - 1)
+            break;
+    }
+
+    // Print total cost
+    printf("Total Cost: %d\n", cost);
+}
+
+int main()
+{
+    /*
+     * Graph represented as edge list:
+     * Each row: {source, destination, weight}
+     */
+    int edges[E][3] = {
+        {0, 1, 2},
+        {0, 2, 3},
+        {1, 2, 5},
+        {1, 3, 3},
+        {2, 4, 4},
+        {3, 4, 2}
+    };
+
+    // Run Kruskal’s Algorithm
+    kruskal(edges);
+
+    return 0;
+}
