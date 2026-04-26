@@ -1,0 +1,108 @@
+Aim:
+
+     To write a C program that solves the Fractional Knapsack problem using a greedy approach, by selecting items based on the highest value-to-weight ratio (profit per weight)
+to maximize total profit within the given capacity.
+
+program:
+
+#include <stdio.h>
+
+/*
+ * Structure: Item
+ * ---------------
+ * Stores weight, value, and profit-per-weight ratio of each item
+ */
+struct Item
+{
+    int weight;   // Weight of the item
+    int value;    // Value (profit) of the item
+    float ppw;    // Profit per weight (value/weight ratio)
+};
+
+/*
+ * Function: sort
+ * --------------
+ * Sorts items in descending order based on profit per weight ratio
+ * (Greedy choice: pick highest ratio first)
+ */
+void sort(struct Item items[], int n)
+{
+    struct Item temp;
+
+    // Bubble sort based on ppw (descending order)
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (items[j].ppw < items[j + 1].ppw)
+            {
+                // Swap items
+                temp = items[j];
+                items[j] = items[j + 1];
+                items[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n;              // Number of items
+    float capacity;     // Capacity of knapsack
+
+    // Input number of items
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    // Validate input
+    if (n <= 0)
+        return 1;
+
+    // Declare array of items
+    struct Item items[n];
+
+    // Input weight and value of each item
+    printf("Enter weight and value of each item:\n");
+    for (int i = 0; i < n; i++)
+    {
+        printf("Item %d: ", i + 1);
+        scanf("%d %d", &items[i].weight, &items[i].value);
+
+        // Calculate profit per weight ratio
+        items[i].ppw = (float)items[i].value / items[i].weight;
+    }
+
+    // Input knapsack capacity
+    printf("Enter knapsack capacity: ");
+    scanf("%f", &capacity);
+
+    // Sort items by decreasing value/weight ratio
+    sort(items, n);
+
+    float totalProfit = 0.0; // Variable to store maximum profit
+
+    // Traverse sorted items
+    for (int i = 0; i < n; i++)
+    {
+        // If the item can be fully included
+        if (capacity >= items[i].weight)
+        {
+            totalProfit += items[i].value;     // Add full value
+            capacity -= items[i].weight;       // Reduce remaining capacity
+        }
+        else
+        {
+            /*
+             * If only a fraction can be taken:
+             * Add proportional value based on remaining capacity
+             */
+            totalProfit += items[i].ppw * capacity;
+            break; // Knapsack is full
+        }
+    }
+
+    // Output the result
+    printf("Maximum profit = %.2f\n", totalProfit);
+
+    return 0;
+}
