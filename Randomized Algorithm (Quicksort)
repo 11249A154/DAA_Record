@@ -1,0 +1,113 @@
+Aim:
+
+    To write a C program that implements Randomized Quick Sort, a divide-and-conquer sorting algorithm, by selecting a random pivot to improve average-case performance and 
+sorting an array of integers in ascending order.
+
+program:
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+/*
+ * Function: swap
+ * --------------
+ * Swaps two integer values using pointers.
+ */
+void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+/*
+ * Function: partition
+ * -------------------
+ * Rearranges elements around a pivot such that:
+ * - Elements smaller than pivot go to left
+ * - Elements greater go to right
+ */
+int partition(int arr[], int low, int high)
+{
+    int pivot = arr[high]; // Pivot element
+    int i = (low - 1);
+
+    for (int j = low; j < high; j++)
+    {
+        // If current element is smaller than pivot
+        if (arr[j] < pivot)
+        {
+            i++;
+            swap(&arr[i], &arr[j]); // Place smaller element on left side
+        }
+    }
+
+    // Place pivot in correct position
+    swap(&arr[i + 1], &arr[high]);
+    return (i + 1);
+}
+
+/*
+ * Function: quickSort
+ * -------------------
+ * Implements Randomized Quick Sort algorithm.
+ * Random pivot selection reduces worst-case probability.
+ */
+void quickSort(int arr[], int low, int high)
+{
+    if (low < high)
+    {
+        /*
+         * Step 1: Choose a random pivot index
+         * and swap it with the last element
+         */
+        int randomIndex = low + rand() % (high - low + 1);
+        swap(&arr[randomIndex], &arr[high]);
+
+        /*
+         * Step 2: Partition the array using pivot
+         */
+        int pi = partition(arr, low, high);
+
+        /*
+         * Step 3: Recursively sort left and right subarrays
+         */
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+int main()
+{
+    int n;
+
+    // Seed random number generator
+    srand(time(NULL));
+
+    // Input number of elements
+    printf("Enter number of elements: ");
+    if (scanf("%d", &n) != 1 || n <= 0)
+    {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+
+    int numbersToSort[n];
+
+    // Input array elements
+    printf("Enter %d integers: ", n);
+    for (int i = 0; i < n; i++)
+        scanf("%d", &numbersToSort[i]);
+
+    // Call randomized quicksort
+    quickSort(numbersToSort, 0, n - 1);
+
+    // Print sorted array
+    printf("\nSorted array: ");
+    for (int i = 0; i < n; i++)
+        printf("%d ", numbersToSort[i]);
+
+    printf("\n");
+
+    return 0;
+}
