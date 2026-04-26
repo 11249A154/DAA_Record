@@ -1,0 +1,56 @@
+Aim:
+
+  To write a C program that solves the Tower of Hanoi problem using recursion and displays the sequence of moves required to transfer all disks from the source rod
+to the destination rod following the rules.
+
+program:
+#include <stdio.h>
+
+/*
+ * Function: towerOfHanoi
+ * ----------------------
+ * Solves the Tower of Hanoi problem recursively.
+ *
+ * diskNumber : Number of disks to be moved
+ * source     : The rod from which disks are moved
+ * destination: The rod to which disks are moved
+ * auxiliary  : The rod used as a helper
+ */
+void towerOfHanoi(int diskNumber, char source, char destination, char auxiliary)
+{
+    // Base case: If there is only one disk, move it directly
+    if (diskNumber == 1) {
+        printf("Move disk 1 from %c to %c\n", source, destination);
+        return;
+    }
+
+    // Step 1: Move (n-1) disks from source to auxiliary using destination as helper
+    towerOfHanoi(diskNumber - 1, source, auxiliary, destination);
+
+    // Step 2: Move the nth (largest) disk from source to destination
+    printf("Move disk %d from %c to %c\n", diskNumber, source, destination);
+
+    // Step 3: Move the (n-1) disks from auxiliary to destination using source as helper
+    towerOfHanoi(diskNumber - 1, auxiliary, destination, source);
+}
+
+int main() {
+    int n;
+
+    // Prompt user to enter number of disks
+    printf("Enter number of disks: ");
+
+    // Validate input (must be a positive integer)
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Please enter a valid positive integer.\n");
+        return 1;
+    }
+
+    // Display heading for output
+    printf("\nRequired moves:\n");
+
+    // Call the recursive function
+    towerOfHanoi(n, 'S', 'D', 'A');
+
+    return 0;
+}
