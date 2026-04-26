@@ -1,0 +1,115 @@
+Aim:
+
+      To write a C program that implements the Best Fit algorithm for the Bin Packing problem, where each item is placed into the bin that leaves the least remaining space
+after placement, thereby optimizing space utilization and minimizing the number of bins used.
+
+program:
+
+#include <stdio.h>
+
+/*
+ * Function: bestFit
+ * -----------------
+ * Implements the Best Fit strategy for bin packing.
+ *
+ * items[]  : Array containing sizes (weights) of items
+ * n        : Number of items
+ * capacity : Maximum capacity of each bin
+ */
+void bestFit(int items[], int n, int capacity)
+{
+    printf("\nBest Fit Algorithm\n");
+
+    int bin[n];       // Array to store remaining capacity of bins
+    int binCount = 0; // Number of bins currently used
+
+    // Initialize all bins with full capacity
+    for (int i = 0; i < n; i++)
+        bin[i] = capacity;
+
+    // Process each item one by one
+    for (int i = 0; i < n; i++)
+    {
+        int bestIndex = -1;        // Index of best bin for current item
+        int minSpace = capacity + 1; // Minimum leftover space after placement
+
+        // Check all existing bins to find the best fit
+        for (int j = 0; j < binCount; j++)
+        {
+            /*
+             * Condition:
+             * 1. Bin must have enough space
+             * 2. Remaining space after placing item should be minimal
+             */
+            if (bin[j] >= items[i] && (bin[j] - items[i]) < minSpace)
+            {
+                bestIndex = j;
+                minSpace = bin[j] - items[i];
+            }
+        }
+
+        // If a suitable bin is found
+        if (bestIndex != -1)
+        {
+            bin[bestIndex] -= items[i]; // Update remaining capacity
+            printf("Item %d (weight: %d) placed in Bin %d\n",
+                   i + 1, items[i], bestIndex + 1);
+        }
+        else
+        {
+            // No suitable bin found → create a new bin
+            bin[binCount] -= items[i];
+            printf("Item %d (weight: %d) placed in Bin %d\n",
+                   i + 1, items[i], binCount + 1);
+            binCount++;
+        }
+    }
+
+    // Display total number of bins used
+    printf("Total bins used = %d\n", binCount);
+}
+
+int main()
+{
+    int n, capacity;
+
+    // Input number of items
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    /*
+     * Declare array after knowing 'n'
+     * This avoids unused memory or garbage values.
+     */
+    int items[n];
+
+    // Input bin capacity
+    printf("Enter bin capacity: ");
+    scanf("%d", &capacity);
+
+    // Input item sizes
+    printf("Enter item sizes:\n");
+    for (int i = 0; i < n; i++)
+    {
+        int itemSize;
+
+        printf("Item %d: ", i + 1);
+        scanf("%d", &itemSize);
+
+        // Validate item size
+        if (itemSize <= capacity)
+        {
+            items[i] = itemSize;
+        }
+        else
+        {
+            printf("Item size exceeds bin capacity. Please enter again.\n");
+            i--; // Repeat same index input
+        }
+    }
+
+    // Call Best Fit function
+    bestFit(items, n, capacity);
+
+    return 0;
+}
